@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PILDUN HORE KNWNG 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module" crossorigin src="https://widgets.api-sports.io/3.1.0/widgets.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:ital,wght@0,700;1,700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #040a1c;
+            background-image: 
+                radial-gradient(circle at 15% 10%, rgba(26, 60, 160, 0.6) 0%, transparent 40%),
+                radial-gradient(circle at 85% 15%, rgba(180, 25, 45, 0.4) 0%, transparent 45%),
+                radial-gradient(circle at 50% 90%, rgba(15, 90, 45, 0.3) 0%, transparent 50%),
+                linear-gradient(to bottom, #040a1c, #01030a);
+            background-attachment: fixed;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+            overflow-x: hidden;
+        }
+
+        .title-font {
+            font-family: 'Oswald', sans-serif;
+            transform: skewX(-6deg);
+            letter-spacing: 1px;
+        }
+
+        /* Styling Tabel Custom */
+        .table-custom {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .table-custom th {
+            background-color: #102167;
+            color: white;
+            font-weight: 700;
+            padding: 16px 12px;
+            text-align: center;
+            border-bottom: 2px solid #ffffff;
+            border-right: 1px solid #1f358f;
+            text-transform: uppercase;
+            font-size: 15px;
+            letter-spacing: 0.5px;
+        }
+        
+        .table-custom th:last-child {
+            border-right: none;
+        }
+        
+        .table-custom td {
+            border-right: 1px solid #d8dfeb;
+            border-bottom: 1px solid #d8dfeb;
+            color: #0f172a;
+        }
+        
+        .table-custom td:last-child {
+            border-right: none;
+        }
+        
+        .table-custom tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .table-custom td.col-nama {
+            background-color: #152d80;
+            color: white;
+            font-weight: 700;
+            text-align: center;
+            border-right: 2px solid white;
+            border-bottom: 1px solid #2b45a6;
+            font-size: 16px;
+            padding: 10px 16px;
+        }
+        
+        /* Baris Belang-belang persis di gambar (putih dan pink/merah pudar) */
+        .table-custom tbody tr:nth-child(odd) td:not(.col-nama) {
+            background-color: #ffffff;
+        }
+        
+        .table-custom tbody tr:nth-child(even) td:not(.col-nama) {
+            background-color: #fbecec;
+        }
+        
+        /* Layout untuk konten dalam cell (bendera + teks) */
+        .cell-content {
+            display: flex;
+            align-items: center;
+            padding: 6px 16px;
+            gap: 16px;
+        }
+        
+        .flag-img {
+            width: 32px;
+            height: 20px;
+            object-fit: cover;
+            border-radius: 2px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+            border: 1px solid rgba(0,0,0,0.1);
+            flex-shrink: 0;
+        }
+        
+        .country-name {
+            font-weight: 500;
+            font-size: 14.5px;
+            white-space: nowrap;
+        }
+
+        /* Responsiveness tambahan untuk HP */
+        @media (max-width: 768px) {
+            .table-custom th:first-child,
+            .table-custom td.col-nama {
+                position: sticky;
+                left: 0;
+                z-index: 20;
+                box-shadow: 4px 0px 6px -1px rgba(0, 0, 0, 0.2);
+            }
+            
+            .table-custom th:first-child {
+                z-index: 30; /* Header tetap di atas */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Graphic -->
+    <div class="mb-10 text-center relative z-10 w-full flex flex-col items-center justify-center">
+        <h1 class="text-4xl sm:text-5xl md:text-7xl font-bold uppercase italic flex flex-wrap justify-center items-center gap-x-4 gap-y-2 title-font drop-shadow-[0_10px_10px_rgba(0,0,0,0.8)]">
+            <span class="text-white drop-shadow-[0_3px_3px_rgba(0,0,0,1)]">PILDUN</span>
+            <span class="text-[#c9962a] drop-shadow-[0_3px_3px_rgba(0,0,0,1)]">HORE</span>
+            <span class="text-white drop-shadow-[0_3px_3px_rgba(0,0,0,1)]">KNWNG</span>
+            <span class="text-[#c9962a] drop-shadow-[0_3px_3px_rgba(0,0,0,1)]">2026</span>
+        </h1>
+    </div>
+
+    <!-- Table Container -->
+    <div class="w-full max-w-[1100px] relative z-10">
+        <div class="rounded-[14px] border-[3px] border-[#102167] shadow-[0_20px_50px_rgba(0,0,0,0.7)] bg-white ring-4 ring-white/10 overflow-x-auto">
+            <table class="table-custom min-w-[900px]">
+                <thead>
+                    <tr>
+                        <th style="width: 14%;">NAMA</th>
+                        <th style="width: 21.5%;">TIM UNGGULAN 1</th>
+                        <th style="width: 21.5%;">TIM UNGGULAN 2</th>
+                        <th style="width: 21.5%;">TIM UNGGULAN 3</th>
+                        <th style="width: 21.5%;">TIM HORE</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Row 1 -->
+                    <tr>
+                        <td class="col-nama">Rehan</td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/mx.png" class="flag-img" alt="Meksiko"><span class="country-name">Meksiko</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/at.png" class="flag-img" alt="Austria"><span class="country-name">Austria</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/ci.png" class="flag-img" alt="Cote D. Ivoire"><span class="country-name">Cote D. Ivoire</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/nz.png" class="flag-img" alt="New Zealand"><span class="country-name">New Zealand</span></div></td>
+                    </tr>
+                    <!-- Row 2 -->
+                    <tr>
+                        <td class="col-nama">Mahbub</td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/ch.png" class="flag-img" alt="Swiss"><span class="country-name">Swiss</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/sn.png" class="flag-img" alt="Senegal"><span class="country-name">Senegal</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/eg.png" class="flag-img" alt="Mesir"><span class="country-name">Mesir</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/ba.png" class="flag-img" alt="Bosnia"><span class="country-name">Bosnia</span></div></td>
+                    </tr>
+                    <!-- Row 3 -->
+                    <tr>
+                        <td class="col-nama">Tegah</td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/nl.png" class="flag-img" alt="Belanda"><span class="country-name">Belanda</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/tr.png" class="flag-img" alt="Turki"><span class="country-name">Turki</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/qa.png" class="flag-img" alt="Qatar"><span class="country-name">Qatar</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/cv.png" class="flag-img" alt="Capo Verde"><span class="country-name">Capo Verde</span></div></td>
+                    </tr>
+                    <!-- Row 4 -->
+                    <tr>
+                        <td class="col-nama">Hendra</td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/us.png" class="flag-img" alt="Amerika"><span class="country-name">Amerika</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/co.png" class="flag-img" alt="Colombia"><span class="country-name">Colombia</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/sa.png" class="flag-img" alt="Arab Saudi"><span class="country-name">Arab Saudi</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/gh.png" class="flag-img" alt="Ghana"><span class="country-name">Ghana</span></div></td>
+                    </tr>
+                    <!-- Row 5 -->
+                    <tr>
+                        <td class="col-nama">Febri</td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/de.png" class="flag-img" alt="Jerman"><span class="country-name">Jerman</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/ma.png" class="flag-img" alt="Maroko"><span class="country-name">Maroko</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/se.png" class="flag-img" alt="Swedia"><span class="country-name">Swedia</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/ht.png" class="flag-img" alt="Haiti"><span class="country-name">Haiti</span></div></td>
+                    </tr>
+                    <!-- Row 6 -->
+                    <tr>
+                        <td class="col-nama">Ari</td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/ar.png" class="flag-img" alt="Argentina"><span class="country-name">Argentina</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/ec.png" class="flag-img" alt="Ecuador"><span class="country-name">Ecuador</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/pa.png" class="flag-img" alt="Panama"><span class="country-name">Panama</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/cw.png" class="flag-img" alt="Curacao"><span class="country-name">Curacao</span></div></td>
+                    </tr>
+                    <!-- Row 7 -->
+                    <tr>
+                        <td class="col-nama">Meyga</td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/es.png" class="flag-img" alt="Spain"><span class="country-name">Spain</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/ir.png" class="flag-img" alt="Iran"><span class="country-name">Iran</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/dz.png" class="flag-img" alt="Aljazair"><span class="country-name">Aljazair</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/tn.png" class="flag-img" alt="Tunisia"><span class="country-name">Tunisia</span></div></td>
+                    </tr>
+                    <!-- Row 8 -->
+                    <tr>
+                        <td class="col-nama">Rizky</td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/gb-eng.png" class="flag-img" alt="England"><span class="country-name">England</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/hr.png" class="flag-img" alt="Croatia"><span class="country-name">Croatia</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/cd.png" class="flag-img" alt="Congo"><span class="country-name">Congo</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/iq.png" class="flag-img" alt="Iraq"><span class="country-name">Iraq</span></div></td>
+                    </tr>
+                    <!-- Row 9 -->
+                    <tr>
+                        <td class="col-nama">Sandi</td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/pt.png" class="flag-img" alt="Portugal"><span class="country-name">Portugal</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/kr.png" class="flag-img" alt="Korsel"><span class="country-name">Korsel</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/cz.png" class="flag-img" alt="Ceko"><span class="country-name">Ceko</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/py.png" class="flag-img" alt="Paraguay"><span class="country-name">Paraguay</span></div></td>
+                    </tr>
+                    <!-- Row 10 -->
+                    <tr>
+                        <td class="col-nama">Farras</td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/fr.png" class="flag-img" alt="Prancis"><span class="country-name">Prancis</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/jp.png" class="flag-img" alt="Jepang"><span class="country-name">Jepang</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/no.png" class="flag-img" alt="Norwegia"><span class="country-name">Norwegia</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/uz.png" class="flag-img" alt="Uzbekistan"><span class="country-name">Uzbekistan</span></div></td>
+                    </tr>
+                    <!-- Row 11 -->
+                    <tr>
+                        <td class="col-nama">Azhar</td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/br.png" class="flag-img" alt="Brazil"><span class="country-name">Brazil</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/ca.png" class="flag-img" alt="Canada"><span class="country-name">Canada</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/gb-sct.png" class="flag-img" alt="Scotlandia"><span class="country-name">Scotlandia</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/jo.png" class="flag-img" alt="Jordania"><span class="country-name">Jordania</span></div></td>
+                    </tr>
+                    <!-- Row 12 -->
+                    <tr>
+                        <td class="col-nama">Endra</td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/be.png" class="flag-img" alt="Belgia"><span class="country-name">Belgia</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/uy.png" class="flag-img" alt="Uruguay"><span class="country-name">Uruguay</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/au.png" class="flag-img" alt="Australia"><span class="country-name">Australia</span></div></td>
+                        <td><div class="cell-content"><img src="https://flagcdn.com/w40/za.png" class="flag-img" alt="Africa Selatan"><span class="country-name">Africa Selatan</span></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- API Widgets Container (Responsive Layout) -->
+    <div class="w-full max-w-[1100px] mt-8 mb-10">
+        <div class="flex flex-col lg:flex-row gap-6 w-full">
+            <!-- League Info -->
+            <div class="w-full lg:w-1/4">
+                <div id="leagues-list" class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <api-sports-widget data-type="league"></api-sports-widget>
+                </div>
+            </div>
+
+            <!-- Game Info -->
+            <div class="w-full lg:w-1/3">
+                <div id="game-content" class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div id="games-list">
+                        <api-sports-widget data-type="game" data-game-id="1489369"></api-sports-widget>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Standings -->
+            <div class="w-full lg:w-5/12">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div id="standings-content">
+                        <api-sports-widget data-type="standings"></api-sports-widget>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Config widget -->
+    <api-sports-widget
+    data-type="config"
+    data-key="ee0d613de4c700bec3d908c5dd0e9bc1"
+    data-sport="football"
+    data-lang="en"
+// Available themes: white, grey, dark, blue
+    data-theme="white"
+    data-show-errors="true"
+    data-show-logos="true"
+    data-refresh="15"
+    data-player-injuries="true"
+    data-team-squad="true"
+    data-team-statistics="true"
+    data-player-statistics="true"
+    data-game-tab="statistics"
+    data-standings="true"
+    data-target-standings="true"
+// Games become clickable and load their content inside the specified block
+    data-target-game="#game-content .card-body"
+// When a player is clicked, their details open in a modal
+    data-target-player="modal"
+// Can be set to "modal" or a CSS selector
+    data-target-team="modal"
+    data-tab="results"
+    data-league="1"
+    data-season="2026"
+  ></api-sports-widget>
+
+    <style type="text/css">
+        api-sports-widget {
+            --primary-font-size: 0.82rem;
+            --secondary-font-size: .8rem;
+            --button-font-size: .8rem;
+            --title-font-size: .9rem;
+            height: 80vh;
+            display: block;
+        }
+        
+        /* Penyesuaian tinggi widget di HP */
+        @media (max-width: 768px) {
+            api-sports-widget {
+                height: 60vh;
+            }
+        }
+        
+        body .modal-widget {
+            width: 90%;
+            max-width: 700px;
+        }
+        body .modal-widget-content {
+            padding: 0;
+            height: 60vh;
+        }
+    </style>
+
+</body>
+</html>
