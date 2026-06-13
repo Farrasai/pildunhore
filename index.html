@@ -5,10 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PILDUN HORE KNWNG 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script type="module" crossorigin src="https://widgets.api-sports.io/3.1.0/widgets.js"></script>
+    <!-- Library HLS.js untuk memutar format M3U8 -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:ital,wght@0,700;1,700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -34,7 +37,6 @@
             letter-spacing: 1px;
         }
 
-        /* Styling Tabel Custom */
         .table-custom {
             width: 100%;
             border-collapse: collapse;
@@ -53,9 +55,7 @@
             letter-spacing: 0.5px;
         }
         
-        .table-custom th:last-child {
-            border-right: none;
-        }
+        .table-custom th:last-child { border-right: none; }
         
         .table-custom td {
             border-right: 1px solid #d8dfeb;
@@ -63,13 +63,8 @@
             color: #0f172a;
         }
         
-        .table-custom td:last-child {
-            border-right: none;
-        }
-        
-        .table-custom tr:last-child td {
-            border-bottom: none;
-        }
+        .table-custom td:last-child { border-right: none; }
+        .table-custom tr:last-child td { border-bottom: none; }
         
         .table-custom td.col-nama {
             background-color: #152d80;
@@ -82,16 +77,9 @@
             padding: 10px 16px;
         }
         
-        /* Baris Belang-belang persis di gambar (putih dan pink/merah pudar) */
-        .table-custom tbody tr:nth-child(odd) td:not(.col-nama) {
-            background-color: #ffffff;
-        }
+        .table-custom tbody tr:nth-child(odd) td:not(.col-nama) { background-color: #ffffff; }
+        .table-custom tbody tr:nth-child(even) td:not(.col-nama) { background-color: #fbecec; }
         
-        .table-custom tbody tr:nth-child(even) td:not(.col-nama) {
-            background-color: #fbecec;
-        }
-        
-        /* Layout untuk konten dalam cell (bendera + teks) */
         .cell-content {
             display: flex;
             align-items: center;
@@ -115,7 +103,21 @@
             white-space: nowrap;
         }
 
-        /* Responsiveness tambahan untuk HP */
+        /* Navigasi CSS */
+        html { scroll-behavior: smooth; }
+        .glass-nav {
+            background: rgba(10, 21, 63, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Custom Scrollbar untuk Channel List */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #0a153f; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #1f358f; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #2b45a6; }
+
         @media (max-width: 768px) {
             .table-custom th:first-child,
             .table-custom td.col-nama {
@@ -124,27 +126,66 @@
                 z-index: 20;
                 box-shadow: 4px 0px 6px -1px rgba(0, 0, 0, 0.2);
             }
-            
-            .table-custom th:first-child {
-                z-index: 30; /* Header tetap di atas */
-            }
+            .table-custom th:first-child { z-index: 30; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Header Graphic -->
-    <div class="mb-10 text-center relative z-10 w-full flex flex-col items-center justify-center">
+    <!-- Top Floating Navbar (Desktop Menu & Mobile Logo) -->
+    <nav class="fixed top-0 w-full z-50 glass-nav transition-all duration-300 shadow-lg" id="navbar">
+        <div class="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center gap-3 cursor-pointer hover:scale-105 transition-transform w-full md:w-auto justify-center md:justify-start" onclick="window.scrollTo(0,0)">
+                    <i class="fas fa-trophy text-[#ffd700] text-2xl drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]"></i>
+                    <span class="text-white font-bold title-font text-xl tracking-widest drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">PILDUN HORE</span>
+                </div>
+                <!-- Desktop Menu -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <a href="#peserta" class="text-gray-300 hover:text-[#ffd700] hover:bg-[#152d80] px-3 py-2 rounded-md text-sm font-semibold transition-all"><i class="fas fa-users mr-1"></i> Kocokan</a>
+                        <a href="#livetv" class="text-gray-300 hover:text-[#ffd700] hover:bg-[#152d80] px-3 py-2 rounded-md text-sm font-semibold transition-all"><i class="fas fa-tv mr-1"></i> Live TV</a>
+                        <a href="#livescore" class="text-gray-300 hover:text-[#ffd700] hover:bg-[#152d80] px-3 py-2 rounded-md text-sm font-semibold transition-all"><i class="fas fa-futbol mr-1"></i> Live Score</a>
+                        <a href="#standings" class="text-gray-300 hover:text-[#ffd700] hover:bg-[#152d80] px-3 py-2 rounded-md text-sm font-semibold transition-all"><i class="fas fa-list-ol mr-1"></i> Klasemen</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Bottom Floating Navbar (Menyamping di tengah bawah) -->
+    <nav class="md:hidden fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 glass-nav rounded-full border border-[#2b45a6] shadow-[0_15px_30px_rgba(0,0,0,0.8)] w-[92%] max-w-[400px] flex justify-around items-center px-1 py-2 backdrop-blur-xl">
+        <a href="#peserta" class="flex flex-col items-center justify-center text-gray-300 hover:text-[#ffd700] active:text-[#ffd700] w-1/4 rounded-lg transition-all">
+            <i class="fas fa-users text-[22px] mb-1"></i>
+            <span class="text-[10px] font-semibold tracking-wide">Kocokan</span>
+        </a>
+        <a href="#livetv" class="flex flex-col items-center justify-center text-gray-300 hover:text-[#ffd700] active:text-[#ffd700] w-1/4 rounded-lg transition-all">
+            <i class="fas fa-tv text-[22px] mb-1"></i>
+            <span class="text-[10px] font-semibold tracking-wide">Live TV</span>
+        </a>
+        <a href="#livescore" class="flex flex-col items-center justify-center text-gray-300 hover:text-[#ffd700] active:text-[#ffd700] w-1/4 rounded-lg transition-all">
+            <i class="fas fa-futbol text-[22px] mb-1"></i>
+            <span class="text-[10px] font-semibold tracking-wide">Score</span>
+        </a>
+        <a href="#standings" class="flex flex-col items-center justify-center text-gray-300 hover:text-[#ffd700] active:text-[#ffd700] w-1/4 rounded-lg transition-all">
+            <i class="fas fa-list-ol text-[22px] mb-1"></i>
+            <span class="text-[10px] font-semibold tracking-wide">Grup</span>
+        </a>
+    </nav>
+
+    <!-- Header Graphic (Bold tanpa gradient) -->
+    <div class="mt-24 mb-10 text-center relative z-10 w-full flex flex-col items-center justify-center">
         <h1 class="text-4xl sm:text-5xl md:text-7xl font-bold uppercase italic flex flex-wrap justify-center items-center gap-x-4 gap-y-2 title-font drop-shadow-[0_10px_10px_rgba(0,0,0,0.8)]">
             <span class="text-white drop-shadow-[0_3px_3px_rgba(0,0,0,1)]">PILDUN</span>
-            <span class="text-[#c9962a] drop-shadow-[0_3px_3px_rgba(0,0,0,1)]">HORE</span>
+            <span class="text-[#ffd700] font-bold drop-shadow-[0_3px_3px_rgba(0,0,0,1)]">HORE</span>
             <span class="text-white drop-shadow-[0_3px_3px_rgba(0,0,0,1)]">KNWNG</span>
-            <span class="text-[#c9962a] drop-shadow-[0_3px_3px_rgba(0,0,0,1)]">2026</span>
+            <span class="text-[#ffd700] font-bold drop-shadow-[0_3px_3px_rgba(0,0,0,1)]">2026</span>
         </h1>
     </div>
 
-    <!-- Table Container -->
-    <div class="w-full max-w-[1100px] relative z-10">
+    <!-- SECTION 1: Table Container -->
+    <div id="peserta" class="w-full max-w-[1100px] relative z-10 scroll-mt-24">
         <div class="rounded-[14px] border-[3px] border-[#102167] shadow-[0_20px_50px_rgba(0,0,0,0.7)] bg-white ring-4 ring-white/10 overflow-x-auto">
             <table class="table-custom min-w-[900px]">
                 <thead>
@@ -157,7 +198,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Row 1 -->
                     <tr>
                         <td class="col-nama">Rehan</td>
                         <td><div class="cell-content"><img src="https://flagcdn.com/w40/mx.png" class="flag-img" alt="Meksiko"><span class="country-name">Meksiko</span></div></td>
@@ -165,7 +205,6 @@
                         <td><div class="cell-content"><img src="https://flagcdn.com/w40/ci.png" class="flag-img" alt="Cote D. Ivoire"><span class="country-name">Cote D. Ivoire</span></div></td>
                         <td><div class="cell-content"><img src="https://flagcdn.com/w40/nz.png" class="flag-img" alt="New Zealand"><span class="country-name">New Zealand</span></div></td>
                     </tr>
-                    <!-- Row 2 -->
                     <tr>
                         <td class="col-nama">Mahbub</td>
                         <td><div class="cell-content"><img src="https://flagcdn.com/w40/ch.png" class="flag-img" alt="Swiss"><span class="country-name">Swiss</span></div></td>
@@ -173,7 +212,6 @@
                         <td><div class="cell-content"><img src="https://flagcdn.com/w40/eg.png" class="flag-img" alt="Mesir"><span class="country-name">Mesir</span></div></td>
                         <td><div class="cell-content"><img src="https://flagcdn.com/w40/ba.png" class="flag-img" alt="Bosnia"><span class="country-name">Bosnia</span></div></td>
                     </tr>
-                    <!-- Row 3 -->
                     <tr>
                         <td class="col-nama">Tegah</td>
                         <td><div class="cell-content"><img src="https://flagcdn.com/w40/nl.png" class="flag-img" alt="Belanda"><span class="country-name">Belanda</span></div></td>
@@ -181,7 +219,6 @@
                         <td><div class="cell-content"><img src="https://flagcdn.com/w40/qa.png" class="flag-img" alt="Qatar"><span class="country-name">Qatar</span></div></td>
                         <td><div class="cell-content"><img src="https://flagcdn.com/w40/cv.png" class="flag-img" alt="Capo Verde"><span class="country-name">Capo Verde</span></div></td>
                     </tr>
-                    <!-- Row 4 -->
                     <tr>
                         <td class="col-nama">Hendra</td>
                         <td><div class="cell-content"><img src="https://flagcdn.com/w40/us.png" class="flag-img" alt="Amerika"><span class="country-name">Amerika</span></div></td>
@@ -189,7 +226,6 @@
                         <td><div class="cell-content"><img src="https://flagcdn.com/w40/sa.png" class="flag-img" alt="Arab Saudi"><span class="country-name">Arab Saudi</span></div></td>
                         <td><div class="cell-content"><img src="https://flagcdn.com/w40/gh.png" class="flag-img" alt="Ghana"><span class="country-name">Ghana</span></div></td>
                     </tr>
-                    <!-- Row 5 -->
                     <tr>
                         <td class="col-nama">Febri</td>
                         <td><div class="cell-content"><img src="https://flagcdn.com/w40/de.png" class="flag-img" alt="Jerman"><span class="country-name">Jerman</span></div></td>
@@ -197,7 +233,6 @@
                         <td><div class="cell-content"><img src="https://flagcdn.com/w40/se.png" class="flag-img" alt="Swedia"><span class="country-name">Swedia</span></div></td>
                         <td><div class="cell-content"><img src="https://flagcdn.com/w40/ht.png" class="flag-img" alt="Haiti"><span class="country-name">Haiti</span></div></td>
                     </tr>
-                    <!-- Row 6 -->
                     <tr>
                         <td class="col-nama">Ari</td>
                         <td><div class="cell-content"><img src="https://flagcdn.com/w40/ar.png" class="flag-img" alt="Argentina"><span class="country-name">Argentina</span></div></td>
@@ -205,7 +240,6 @@
                         <td><div class="cell-content"><img src="https://flagcdn.com/w40/pa.png" class="flag-img" alt="Panama"><span class="country-name">Panama</span></div></td>
                         <td><div class="cell-content"><img src="https://flagcdn.com/w40/cw.png" class="flag-img" alt="Curacao"><span class="country-name">Curacao</span></div></td>
                     </tr>
-                    <!-- Row 7 -->
                     <tr>
                         <td class="col-nama">Meyga</td>
                         <td><div class="cell-content"><img src="https://flagcdn.com/w40/es.png" class="flag-img" alt="Spain"><span class="country-name">Spain</span></div></td>
@@ -213,7 +247,6 @@
                         <td><div class="cell-content"><img src="https://flagcdn.com/w40/dz.png" class="flag-img" alt="Aljazair"><span class="country-name">Aljazair</span></div></td>
                         <td><div class="cell-content"><img src="https://flagcdn.com/w40/tn.png" class="flag-img" alt="Tunisia"><span class="country-name">Tunisia</span></div></td>
                     </tr>
-                    <!-- Row 8 -->
                     <tr>
                         <td class="col-nama">Rizky</td>
                         <td><div class="cell-content"><img src="https://flagcdn.com/w40/gb-eng.png" class="flag-img" alt="England"><span class="country-name">England</span></div></td>
@@ -221,7 +254,6 @@
                         <td><div class="cell-content"><img src="https://flagcdn.com/w40/cd.png" class="flag-img" alt="Congo"><span class="country-name">Congo</span></div></td>
                         <td><div class="cell-content"><img src="https://flagcdn.com/w40/iq.png" class="flag-img" alt="Iraq"><span class="country-name">Iraq</span></div></td>
                     </tr>
-                    <!-- Row 9 -->
                     <tr>
                         <td class="col-nama">Sandi</td>
                         <td><div class="cell-content"><img src="https://flagcdn.com/w40/pt.png" class="flag-img" alt="Portugal"><span class="country-name">Portugal</span></div></td>
@@ -229,7 +261,6 @@
                         <td><div class="cell-content"><img src="https://flagcdn.com/w40/cz.png" class="flag-img" alt="Ceko"><span class="country-name">Ceko</span></div></td>
                         <td><div class="cell-content"><img src="https://flagcdn.com/w40/py.png" class="flag-img" alt="Paraguay"><span class="country-name">Paraguay</span></div></td>
                     </tr>
-                    <!-- Row 10 -->
                     <tr>
                         <td class="col-nama">Farras</td>
                         <td><div class="cell-content"><img src="https://flagcdn.com/w40/fr.png" class="flag-img" alt="Prancis"><span class="country-name">Prancis</span></div></td>
@@ -237,7 +268,6 @@
                         <td><div class="cell-content"><img src="https://flagcdn.com/w40/no.png" class="flag-img" alt="Norwegia"><span class="country-name">Norwegia</span></div></td>
                         <td><div class="cell-content"><img src="https://flagcdn.com/w40/uz.png" class="flag-img" alt="Uzbekistan"><span class="country-name">Uzbekistan</span></div></td>
                     </tr>
-                    <!-- Row 11 -->
                     <tr>
                         <td class="col-nama">Azhar</td>
                         <td><div class="cell-content"><img src="https://flagcdn.com/w40/br.png" class="flag-img" alt="Brazil"><span class="country-name">Brazil</span></div></td>
@@ -245,7 +275,6 @@
                         <td><div class="cell-content"><img src="https://flagcdn.com/w40/gb-sct.png" class="flag-img" alt="Scotlandia"><span class="country-name">Scotlandia</span></div></td>
                         <td><div class="cell-content"><img src="https://flagcdn.com/w40/jo.png" class="flag-img" alt="Jordania"><span class="country-name">Jordania</span></div></td>
                     </tr>
-                    <!-- Row 12 -->
                     <tr>
                         <td class="col-nama">Endra</td>
                         <td><div class="cell-content"><img src="https://flagcdn.com/w40/be.png" class="flag-img" alt="Belgia"><span class="country-name">Belgia</span></div></td>
@@ -258,91 +287,702 @@
         </div>
     </div>
 
-    <!-- API Widgets Container (Responsive Layout) -->
-    <div class="w-full max-w-[1100px] mt-8 mb-10">
-        <div class="flex flex-col lg:flex-row gap-6 w-full">
-            <!-- League Info -->
-            <div class="w-full lg:w-1/4">
-                <div id="leagues-list" class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <api-sports-widget data-type="league"></api-sports-widget>
+    <!-- SECTION 2: Live TV Video Player -->
+    <div id="livetv" class="w-full max-w-[1100px] mt-16 relative z-10 scroll-mt-24">
+        <div class="bg-[#102167]/80 backdrop-blur-md rounded-[14px] border-[3px] border-[#1f358f] shadow-[0_20px_50px_rgba(0,0,0,0.5)] p-6 sm:p-8 text-white">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-[#1f358f] pb-6">
+                <div>
+                    <h2 class="text-3xl font-bold title-font italic text-[#ffd700] mb-2">LIVE STREAMING</h2>
+                    <p class="text-gray-300 text-sm md:text-base max-w-2xl font-light">
+                        Menyiarkan siaran langsung pertandingan Piala Dunia 2026. Cari Saluran pertandingan di Daftar Saluran
+                    </p>
+                </div>
+                <div class="mt-4 md:mt-0 flex items-center gap-2 bg-red-600 px-5 py-2 rounded font-bold shadow-lg text-sm tracking-wider">
+                    <span class="w-2.5 h-2.5 bg-white rounded-full animate-pulse"></span> LIVE
                 </div>
             </div>
 
-            <!-- Game Info -->
-            <div class="w-full lg:w-1/3">
-                <div id="game-content" class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <div id="games-list">
-                        <api-sports-widget data-type="game" data-game-id="1489369"></api-sports-widget>
+            <div class="flex flex-col lg:flex-row gap-6">
+                <!-- Video Player Area -->
+                <div class="w-full lg:w-3/4 flex flex-col shadow-xl rounded-lg overflow-hidden border-2 border-[#1f358f] bg-[#020617] relative">
+                    <div class="bg-[#0a153f] px-4 py-2 border-b border-[#1f358f] flex items-center justify-between">
+                        <span id="current-channel-name" class="font-semibold text-[#ffd700] text-sm"><i class="fas fa-tv mr-2"></i> Pilihan Saluran TV</span>
+                        <div class="flex gap-2">
+                            <div class="w-2.5 h-2.5 rounded-full bg-red-500"></div>
+                            <div class="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
+                            <div class="w-2.5 h-2.5 rounded-full bg-green-500"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="relative w-full aspect-video bg-black">
+                        <video id="tv-player" class="w-full h-full" controls></video>
+                        <!-- Loader / Indicator -->
+                        <div id="tv-loader" class="absolute inset-0 bg-black/80 flex flex-col items-center justify-center z-10 hidden">
+                            <div class="w-10 h-10 border-4 border-[#ffd700] border-t-transparent rounded-full animate-spin mb-4"></div>
+                            <span class="text-gray-300 font-mono text-sm" id="tv-status-msg">Menyambungkan ke Stream...</span>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Standings -->
-            <div class="w-full lg:w-5/12">
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <div id="standings-content">
-                        <api-sports-widget data-type="standings"></api-sports-widget>
+                <!-- Channel List Sidebar -->
+                <div class="w-full lg:w-1/4 flex flex-col bg-[#0a153f] border border-[#1f358f] rounded-lg overflow-hidden shadow-xl">
+                    <div class="bg-[#152d80] text-gray-200 text-sm font-bold px-4 py-3 border-b border-[#2b45a6] flex flex-col gap-3">
+                        <div><i class="fas fa-list-ul mr-2"></i> Daftar Saluran</div>
+                        <!-- Fitur Pencarian Saluran -->
+                        <div class="relative">
+                            <input type="text" id="channel-search" placeholder="Cari saluran IPTV..." class="w-full bg-[#0a153f] border border-[#2b45a6] rounded px-3 py-1.5 text-xs text-white focus:outline-none focus:border-[#ffd700] transition-colors placeholder-gray-400">
+                            <i class="fas fa-search absolute right-3 top-2 text-gray-400 text-xs"></i>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-1 p-2 h-[250px] lg:h-[375px] overflow-y-auto custom-scrollbar" id="channel-list">
+                        <div class="text-center text-gray-400 py-8 font-mono text-xs flex flex-col items-center">
+                            <div class="w-6 h-6 border-2 border-gray-400 border-t-transparent rounded-full animate-spin mb-2"></div>
+                            Memuat index.m3u...
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Config widget -->
-    <api-sports-widget
-    data-type="config"
-    data-key="ee0d613de4c700bec3d908c5dd0e9bc1"
-    data-sport="football"
-    data-lang="en"
-// Available themes: white, grey, dark, blue
-    data-theme="white"
-    data-show-errors="true"
-    data-show-logos="true"
-    data-refresh="15"
-    data-player-injuries="true"
-    data-team-squad="true"
-    data-team-statistics="true"
-    data-player-statistics="true"
-    data-game-tab="statistics"
-    data-standings="true"
-    data-target-standings="true"
-// Games become clickable and load their content inside the specified block
-    data-target-game="#game-content .card-body"
-// When a player is clicked, their details open in a modal
-    data-target-player="modal"
-// Can be set to "modal" or a CSS selector
-    data-target-team="modal"
-    data-tab="results"
-    data-league="1"
-    data-season="2026"
-  ></api-sports-widget>
+    <!-- SECTION 3: Live Score & Match Schedule UI -->
+    <div id="livescore" class="w-full max-w-[1100px] mt-12 mb-20 relative z-10 scroll-mt-24">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 border-b-2 border-[#1f358f] pb-4">
+            <div>
+                <h2 class="text-3xl font-bold title-font italic text-[#ffd700]">LIVE SKOR</h2>
+                <p class="text-gray-400 mt-2 font-mono text-sm flex items-center flex-wrap gap-2">
+                    <span class="bg-gray-800 text-gray-300 px-2 py-1 rounded border border-gray-600 text-xs">Realtime Skor Pertandingan:</span>
+                   <!-- <span class="bg-blue-500/20 text-blue-400 px-2 py-1 rounded font-bold">CURL</span> -->
+                    <code class="text-gray-300 bg-[#020617] px-2 py-1 rounded border border-[#1f358f]">Babak Grup</code>
+                </p>
+            </div>
+            <button onclick="fetchMatchScheduleUI()" class="mt-4 md:mt-0 flex items-center gap-2 bg-[#ffd700] hover:bg-yellow-500 text-[#040a1c] px-4 py-2 rounded transition-colors text-sm font-bold shadow-lg">
+                <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+        </div>
 
-    <style type="text/css">
-        api-sports-widget {
-            --primary-font-size: 0.82rem;
-            --secondary-font-size: .8rem;
-            --button-font-size: .8rem;
-            --title-font-size: .9rem;
-            height: 80vh;
-            display: block;
-        }
-        
-        /* Penyesuaian tinggi widget di HP */
-        @media (max-width: 768px) {
-            api-sports-widget {
-                height: 60vh;
+        <!-- Card Grid untuk menampung UI Pertandingan -->
+        <div id="match-ui-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Cards Live Score akan muncul disini via JS -->
+        </div>
+    </div>
+
+    <!-- SECTION 4: Group Standings UI -->
+    <div id="standings" class="w-full max-w-[1100px] mt-12 mb-20 relative z-10 scroll-mt-24">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 border-b-2 border-[#1f358f] pb-4">
+            <div>
+                <h2 class="text-3xl font-bold title-font italic text-[#ffd700]">Klasemen</h2>
+                <p class="text-gray-400 mt-2 font-mono text-sm flex items-center flex-wrap gap-2">
+                    <span class="bg-gray-800 text-gray-300 px-2 py-1 rounded border border-gray-600 text-xs">Official Data Source:</span>
+                    <span class="bg-blue-500/20 text-blue-400 px-2 py-1 rounded font-bold">FIFA.com</span>
+                </p>
+            </div>
+            <a href="https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026/standings" target="_blank" class="mt-4 md:mt-0 flex items-center gap-2 bg-[#ffd700] hover:bg-yellow-500 text-[#040a1c] px-4 py-2 rounded transition-colors text-sm font-bold shadow-lg">
+                <i class="fas fa-external-link-alt"></i> Buka di FIFA.com
+            </a>
+        </div>
+
+        <!-- Iframe Container -->
+        <div class="w-full bg-[#102167]/80 backdrop-blur-md rounded-[14px] border-[3px] border-[#1f358f] shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden h-[600px] relative">
+            <iframe 
+                src="https://www.sportbusy.com/world-cup-2026-standings/" 
+                class="w-full h-full border-none bg-[#f4f4f4]"
+                title="FIFA World Cup 2026 Standings"
+                sandbox="allow-scripts allow-same-origin allow-popups"
+            ></iframe>
+        </div>
+    </div>
+
+    <script>
+        // --- GLOBAL VARIABLE UNTUK MENYIMPAN DATA TEAM DI MEMORY ---
+        let globalTeamsMap = {};
+        let isTeamsDictionaryReady = false; // Flag status sinkronisasi
+
+        // --- MENGAMBIL DATA REFERENSI TIM (DICTIONARY BUILDER) ---
+        async function buildTeamsDictionary() {
+            try {
+                // Gunakan promise.race agar tidak tertahan oleh timeout CORS
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 8000);
+                
+                const response = await fetch('https://worldcup26.ir/get/teams', { 
+                    method: 'GET', 
+                    headers: { 'Accept': 'application/json' },
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                
+                const data = await response.json();
+                let teamsData = data.data || data;
+                
+                if(Array.isArray(teamsData)) {
+                    teamsData.forEach(team => {
+                        if(team.id || team._id) {
+                            globalTeamsMap[team.id || team._id] = team.name_en || team.name || "Unknown";
+                        }
+                    });
+                    isTeamsDictionaryReady = true;
+                    console.log("Teams Dictionary Loaded Successfully:", Object.keys(globalTeamsMap).length, "teams mapped.");
+                }
+            } catch(e) {
+                console.warn("Teams Dictionary Failed. Using Internal Mapping.", e);
+                populateMockDictionary();
+                isTeamsDictionaryReady = true;
             }
         }
+
+        // --- LOGIC 1: Video Player IPTV (HLS) ---
+        let hlsInstance = null;
+        let allIptvChannels = []; // Array rahasia untuk menyimpan SEMUA saluran
+        let currentPlayingUrl = ''; // Menyimpan state saluran yang sedang disetel
+
+        async function loadIPTV() {
+            const channelListEl = document.getElementById('channel-list');
+            const searchInput = document.getElementById('channel-search');
+            
+            try {
+                const response = await fetch('https://iptv-org.github.io/iptv/index.m3u');
+                if (!response.ok) throw new Error('Gagal memuat index.m3u');
+                const textData = await response.text();
+                
+                const lines = textData.split('\n');
+                let currentChannelName = 'Unknown Channel';
+
+                // 1. Kumpulkan SELURUH saluran ke dalam memori (Tanpa dirender ke UI agar tidak lag)
+                const tempChannels = [];
+                const seenNames = new Set(); // Mencegah nama channel duplikat
+
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (line.startsWith('#EXTINF:')) {
+                        const parts = line.split(',');
+                        currentChannelName = parts[parts.length - 1].trim();
+                    } else if (line.startsWith('http')) {
+                        // Hanya masukkan jika belum ada (membersihkan duplikat)
+                        if (!seenNames.has(currentChannelName)) {
+                            seenNames.add(currentChannelName);
+                            tempChannels.push({ name: currentChannelName, url: line });
+                        }
+                        currentChannelName = 'Unknown Channel';
+                    }
+                }
+                
+                allIptvChannels = tempChannels;
+
+                // Fallback darurat jika iptv-org sedang kosong
+                if (allIptvChannels.length === 0) {
+                    allIptvChannels = [
+                        { name: 'FIFA TV (Backup Stream)', url: 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8' },
+                        { name: 'TVRI Sport (Backup Stream)', url: 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8' }
+                    ];
+                }
+
+                // 2. Render UI pertama kali (Default filter: FIFA & TVRI)
+                renderChannelList('');
+
+                // 3. Pasang Event Listener untuk fitur Pencarian Interaktif
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => {
+                        renderChannelList(e.target.value);
+                    });
+                }
+
+                // Autoplay Channel teratas saat pertama kali di-load
+                const firstChannelBtn = channelListEl.querySelector('button');
+                if (firstChannelBtn) firstChannelBtn.click();
+
+            } catch (error) {
+                console.error("Gagal parse M3U:", error);
+                channelListEl.innerHTML = '<div class="text-center text-red-400 py-4 text-xs">Akses m3u diblokir CORS. Menampilkan Channel Darurat.</div>';
+                playHLSStream('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8');
+                document.getElementById('current-channel-name').innerHTML = '<i class="fas fa-satellite-dish text-green-400 mr-2"></i> Fallback Test Stream';
+            }
+        }
+
+        // Fungsi Dinamis untuk Menyaring & Merender Daftar Saluran
+        function renderChannelList(searchTerm) {
+            const channelListEl = document.getElementById('channel-list');
+            channelListEl.innerHTML = ''; // Bersihkan list
+            
+            let filteredChannels = [];
+            const term = searchTerm.toLowerCase().trim();
+
+            if (term === '') {
+                // KONDISI 1: Default (Kotak pencarian kosong) -> Tampilkan FIFA & TVRI Sport saja
+                filteredChannels = allIptvChannels.filter(ch => {
+                    const nameLower = ch.name.toLowerCase();
+                    return nameLower.includes('fifa') || nameLower.includes('tvri sport');
+                });
+                
+                // Jika filter di atas tidak menemukan apa-apa, tampilkan 30 saluran acak pertama
+                if(filteredChannels.length === 0) {
+                    filteredChannels = allIptvChannels.slice(0, 30);
+                }
+            } else {
+                // KONDISI 2: User Mengetik -> Cari di seluruh database (Puluhan Ribu Data)
+                filteredChannels = allIptvChannels.filter(ch => ch.name.toLowerCase().includes(term));
+            }
+
+            // Batasi hasil render maksimal 60 tombol saja agar Browser (HP) tidak Hang/Crash!
+            const channelsToRender = filteredChannels.slice(0, 60);
+
+            if (channelsToRender.length === 0) {
+                channelListEl.innerHTML = '<div class="text-center text-gray-400 py-8 text-xs italic">Saluran tidak ditemukan.</div>';
+                return;
+            }
+
+            channelsToRender.forEach((ch) => {
+                const btn = document.createElement('button');
+                btn.className = 'w-full text-left bg-transparent hover:bg-[#1f358f] text-gray-300 hover:text-white px-3 py-2 rounded border border-transparent transition-colors font-medium text-xs truncate focus:outline-none';
+                btn.innerText = ch.name;
+                
+                // Pertahankan status tombol aktif jika saluran ini yang sedang diputar
+                if (currentPlayingUrl === ch.url) {
+                    btn.classList.add('bg-[#1f358f]', 'text-[#ffd700]', 'border-[#2b45a6]');
+                    btn.classList.remove('bg-transparent', 'text-gray-300', 'border-transparent');
+                }
+
+                btn.onclick = () => {
+                    currentPlayingUrl = ch.url; // Simpan state
+                    
+                    // Hilangkan indikator aktif dari tombol lain
+                    document.querySelectorAll('#channel-list button').forEach(b => {
+                        b.classList.remove('bg-[#1f358f]', 'text-[#ffd700]', 'border-[#2b45a6]');
+                        b.classList.add('bg-transparent', 'text-gray-300', 'border-transparent');
+                    });
+                    
+                    // Set tombol ini jadi aktif
+                    btn.classList.remove('bg-transparent', 'text-gray-300', 'border-transparent');
+                    btn.classList.add('bg-[#1f358f]', 'text-[#ffd700]', 'border-[#2b45a6]');
+                    
+                    document.getElementById('current-channel-name').innerHTML = `<i class="fas fa-satellite-dish text-green-400 mr-2"></i> ${ch.name}`;
+                    playHLSStream(ch.url);
+                };
+                channelListEl.appendChild(btn);
+            });
+        }
+
+        function playHLSStream(url) {
+            const video = document.getElementById('tv-player');
+            const loader = document.getElementById('tv-loader');
+            const msg = document.getElementById('tv-status-msg');
+            
+            loader.classList.remove('hidden');
+            msg.innerText = "Menyambungkan ke Stream...";
+
+            if (Hls.isSupported()) {
+                if (hlsInstance) {
+                    hlsInstance.destroy();
+                }
+                hlsInstance = new Hls({
+                    maxBufferLength: 30,
+                    liveSyncDurationCount: 3
+                });
+                
+                hlsInstance.loadSource(url);
+                hlsInstance.attachMedia(video);
+                
+                hlsInstance.on(Hls.Events.MANIFEST_PARSED, function() {
+                    loader.classList.add('hidden');
+                    const playPromise = video.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(error => {
+                            // Tangani proteksi autoplay browser
+                            loader.classList.remove('hidden');
+                            msg.innerText = "Klik tombol play untuk memulai.";
+                        });
+                    }
+                });
+
+                hlsInstance.on(Hls.Events.ERROR, function(event, data) {
+                    if (data.fatal) {
+                        console.error("HLS Error:", data);
+                        loader.classList.remove('hidden');
+                        msg.innerHTML = `<span class="text-red-400">Error memuat stream. Saluran offline.</span>`;
+                        hlsInstance.destroy();
+                    }
+                });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                // Fallback untuk Safari Native HLS Player
+                video.src = url;
+                video.addEventListener('loadedmetadata', function() {
+                    loader.classList.add('hidden');
+                    video.play();
+                });
+                video.addEventListener('error', function() {
+                    loader.classList.remove('hidden');
+                    msg.innerHTML = `<span class="text-red-400">Safari gagal memuat stream ini.</span>`;
+                });
+            } else {
+                loader.classList.remove('hidden');
+                msg.innerHTML = `<span class="text-red-400">Browser Anda tidak mendukung HLS Playback.</span>`;
+            }
+        }
+
+        // --- LOGIC 2: Untuk Live Score & Schedule UI ---
+        async function fetchMatchScheduleUI() {
+            const grid = document.getElementById('match-ui-grid');
+            grid.innerHTML = `
+                <div class="col-span-full flex flex-col items-center justify-center py-12">
+                    <div class="w-12 h-12 border-4 border-[#ffd700] border-t-transparent rounded-full animate-spin mb-4"></div>
+                    <p class="text-gray-300 font-mono text-sm animate-pulse">Executing curl simulation to /get/games...</p>
+                </div>
+            `;
+
+            try {
+                const response = await fetch('https://worldcup26.ir/get/games', { method: 'GET', headers: { 'Accept': 'application/json' } });
+                if (!response.ok) throw new Error('API Blocked');
+                const data = await response.json();
+                const gamesArray = Array.isArray(data) ? data : (data.data || data.games || []);
+                renderMatchCards(gamesArray);
+            } catch (error) {
+                setTimeout(() => { renderMatchCards(getSimulatedData('get/games').games); }, 800);
+            }
+        }
+
+        function renderMatchCards(games) {
+            const grid = document.getElementById('match-ui-grid');
+            grid.innerHTML = '';
+            
+            if(!games || games.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center text-gray-400 py-8">No match data available.</div>`;
+                return;
+            }
+
+            games.forEach(game => {
+                const homeName = game.home_team_name_en || game.homeTeam || game.home_team_label || 'TBA Home';
+                const awayName = game.away_team_name_en || game.visitingTeam || game.away_team_label || 'TBA Away';
+                
+                const homeFlag = getFlagCode(homeName);
+                const awayFlag = getFlagCode(awayName);
+                
+                const homeScore = (game.home_score !== null && game.home_score !== undefined && game.home_score !== "null") ? game.home_score : '-';
+                const awayScore = (game.away_score !== null && game.away_score !== undefined && game.away_score !== "null") ? game.away_score : '-';
+                
+                let status = 'SCHEDULED';
+                let timeElapsed = game.time_elapsed || '';
+                
+                if (game.finished === 'TRUE' || game.finished === 'true' || game.finished === true) {
+                    status = 'FINISHED';
+                } else if (timeElapsed && timeElapsed.toLowerCase() !== 'notstarted' && timeElapsed !== '0') {
+                    status = 'LIVE';
+                }
+
+                let time = game.local_date || game.date || 'TBD';
+                if (time && time.includes('T')) {
+                    const d = new Date(time);
+                    time = d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }).replace(/\./g, ':');
+                }
+                
+                const stadium = game.stadium_id ? `Stadium ID: ${game.stadium_id}` : 'TBA Stadium';
+                
+                let statusBadge = '';
+                if (status === 'LIVE') {
+                    statusBadge = `<span class="bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded flex items-center gap-1"><span class="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>LIVE ${timeElapsed ? timeElapsed+'\'' : ''}</span>`;
+                } else if (status === 'FINISHED') {
+                    statusBadge = `<span class="bg-gray-600 text-white text-[10px] font-bold px-2 py-1 rounded">FT</span>`;
+                } else {
+                    statusBadge = `<span class="bg-[#152d80] border border-[#2b45a6] text-gray-300 text-[10px] font-bold px-2 py-1 rounded"><i class="far fa-clock mr-1"></i>${time}</span>`;
+                }
+
+                const card = document.createElement('div');
+                card.className = 'bg-[#102167]/80 backdrop-blur-md rounded-[14px] border-[2px] border-[#1f358f] p-5 shadow-[0_10px_25px_rgba(0,0,0,0.5)] hover:border-[#ffd700] transition-colors relative overflow-hidden group';
+                card.innerHTML = `
+                    <div class="flex justify-between items-center mb-5 border-b border-[#1f358f] pb-3">
+                        <span class="text-xs text-gray-400 font-medium truncate pr-2"><i class="fas fa-map-marker-alt mr-1 text-[#ffd700]"></i> ${stadium}</span>
+                        ${statusBadge}
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <div class="flex flex-col items-center w-1/3">
+                            <img src="https://flagcdn.com/w80/${homeFlag}.png" onerror="this.src='https://placehold.co/80x53/152d80/ffffff?text=?'" class="w-12 h-8 object-cover rounded shadow-md border border-white/10 mb-2 group-hover:scale-110 transition-transform" alt="${homeName}">
+                            <span class="text-white font-semibold text-sm text-center line-clamp-1" title="${homeName}">${homeName}</span>
+                        </div>
+                        <div class="w-1/3 flex justify-center items-center gap-3">
+                            <span class="text-3xl font-bold ${status === 'LIVE' ? 'text-[#ffd700]' : 'text-white'}">${homeScore}</span>
+                            <span class="text-gray-500 text-sm font-bold">VS</span>
+                            <span class="text-3xl font-bold ${status === 'LIVE' ? 'text-[#ffd700]' : 'text-white'}">${awayScore}</span>
+                        </div>
+                        <div class="flex flex-col items-center w-1/3">
+                            <img src="https://flagcdn.com/w80/${awayFlag}.png" onerror="this.src='https://placehold.co/80x53/152d80/ffffff?text=?'" class="w-12 h-8 object-cover rounded shadow-md border border-white/10 mb-2 group-hover:scale-110 transition-transform" alt="${awayName}">
+                            <span class="text-white font-semibold text-sm text-center line-clamp-1" title="${awayName}">${awayName}</span>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // --- LOGIC 3: Untuk Group Standings UI ---
+        async function fetchStandingsUI() {
+            const grid = document.getElementById('standings-ui-grid');
+            grid.innerHTML = `
+                <div class="col-span-full flex flex-col items-center justify-center py-12">
+                    <div class="w-12 h-12 border-4 border-[#ffd700] border-t-transparent rounded-full animate-spin mb-4"></div>
+                    <p class="text-gray-300 font-mono text-sm animate-pulse">Synchronizing Pildun Hore Groups Data...</p>
+                </div>
+            `;
+
+            // TUNGGU SAMPAI DICTIONARY SIAP
+            let waitCounter = 0;
+            while(!isTeamsDictionaryReady && waitCounter < 30) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+                waitCounter++;
+            }
+
+            // Kamus untuk menyimpan statistik dari API jika berhasil ditarik
+            let apiStatsMap = {};
+
+            try {
+                const response = await fetch('https://worldcup26.ir/get/groups', { method: 'GET', headers: { 'Accept': 'application/json' } });
+                if (response.ok) {
+                    const data = await response.json();
+                    let groupsArray = data.data || data.groups || data || [];
+                    
+                    groupsArray.forEach(g => {
+                        let teams = g.teams || g.standings || [];
+                        if (!Array.isArray(teams) && typeof teams === 'object') teams = Object.values(teams);
+                        
+                        teams.forEach(t => {
+                            let teamName = '';
+                            if (t.name_en) teamName = t.name_en;
+                            else if (t.team && t.team.name_en) teamName = t.team.name_en;
+                            else if (t.team_id && globalTeamsMap[t.team_id]) teamName = globalTeamsMap[t.team_id];
+                            else if (typeof t === 'string') teamName = t;
+                            
+                            if (teamName) {
+                                const key = teamName.toLowerCase().trim();
+                                apiStatsMap[key] = {
+                                    mp: t.games_played || t.mp || t.played || 0,
+                                    w: t.win || t.w || 0,
+                                    d: t.draw || t.d || 0,
+                                    l: t.loss || t.l || 0,
+                                    gd: t.goal_differential || t.gd || 0,
+                                    pts: t.points || t.pts || 0
+                                };
+                            }
+                        });
+                    });
+                }
+            } catch (error) {
+                console.warn("Standings API Fetch failed, falling back to clean template.", error);
+            }
+
+            let finalGroups = getPildunHoreMasterGroups();
+
+            finalGroups.forEach(g => {
+                g.teams.forEach(t => {
+                    const key = t.name_en.toLowerCase().trim();
+                    if (apiStatsMap[key]) {
+                        t.mp = apiStatsMap[key].mp;
+                        t.w = apiStatsMap[key].w;
+                        t.d = apiStatsMap[key].d;
+                        t.l = apiStatsMap[key].l;
+                        t.gd = apiStatsMap[key].gd;
+                        t.pts = apiStatsMap[key].pts;
+                    }
+                });
+
+                g.teams.sort((a, b) => {
+                    const ptsA = Number(a.pts || 0);
+                    const ptsB = Number(b.pts || 0);
+                    const gdA = Number(a.gd || 0);
+                    const gdB = Number(b.gd || 0);
+                    if (ptsB !== ptsA) return ptsB - ptsA;
+                    return gdB - gdA;
+                });
+            });
+
+            renderStandingsCards(finalGroups);
+        }
+
+        function renderStandingsCards(groupsList) {
+            const grid = document.getElementById('standings-ui-grid');
+            grid.innerHTML = '';
+            
+            groupsList.forEach(groupObj => {
+                let groupLetter = groupObj.group;
+                let teamsInGroup = groupObj.teams;
+                let rowsHtml = '';
+                
+                teamsInGroup.forEach((t, index) => {
+                    const name = t.name_en;
+                    const flag = getFlagCode(name);
+                    
+                    const isQualifying = index < 2;
+                    const rowClass = isQualifying 
+                        ? 'border-b border-[#2b45a6] bg-[#1a3592]/30 hover:bg-[#1a3592]/70' 
+                        : 'border-b border-[#1f358f]/50 hover:bg-[#1f358f]/30';
+                    const indexStyle = isQualifying 
+                        ? 'bg-[#ffd700] text-[#040a1c]' 
+                        : 'bg-gray-700 text-gray-300';
+
+                    rowsHtml += `
+                        <tr class="${rowClass} transition-colors group">
+                            <td class="py-3 px-2 text-center text-xs font-bold"><span class="w-5 h-5 flex items-center justify-center rounded-full ${indexStyle} mx-auto">${index + 1}</span></td>
+                            <td class="py-3 px-2">
+                                <div class="flex items-center gap-2">
+                                    <img src="https://flagcdn.com/w20/${flag}.png" onerror="this.src='https://placehold.co/20x15/152d80/ffffff?text=?'" class="w-5 h-[14px] object-cover rounded-[2px] border border-white/10" alt="${name}">
+                                    <span class="text-white text-sm font-semibold whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px] sm:max-w-[120px]" title="${name}">${name}</span>
+                                </div>
+                            </td>
+                            <td class="py-3 px-1 text-center text-gray-400 text-xs">${t.mp}</td>
+                            <td class="py-3 px-1 text-center text-gray-400 text-xs">${t.w}</td>
+                            <td class="py-3 px-1 text-center text-gray-400 text-xs">${t.d}</td>
+                            <td class="py-3 px-1 text-center text-gray-400 text-xs">${t.l}</td>
+                            <td class="py-3 px-1 text-center font-mono ${t.gd > 0 ? 'text-green-400' : (t.gd < 0 ? 'text-red-400' : 'text-gray-400')} text-xs">${t.gd > 0 ? '+'+t.gd : t.gd}</td>
+                            <td class="py-3 px-2 text-center text-[#ffd700] font-bold text-sm">${t.pts}</td>
+                        </tr>
+                    `;
+                });
+
+                const groupCard = document.createElement('div');
+                groupCard.className = 'bg-[#102167]/80 backdrop-blur-md rounded-[14px] border-[2px] border-[#1f358f] shadow-[0_10px_25px_rgba(0,0,0,0.5)] overflow-hidden';
+                groupCard.innerHTML = `
+                    <div class="bg-gradient-to-r from-[#152d80] to-[#0a153f] py-3 px-4 border-b-2 border-[#ffd700]/30 flex justify-between items-center">
+                        <h3 class="text-white font-bold text-lg italic">GROUP <span class="text-[#ffd700]">${groupLetter}</span></h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse min-w-[300px]">
+                            <thead>
+                                <tr class="bg-[#020617]/50 text-gray-400 text-[10px] uppercase tracking-wider">
+                                    <th class="py-2 px-2 text-center w-8">#</th>
+                                    <th class="py-2 px-2 font-medium">Team</th>
+                                    <th class="py-2 px-1 text-center" title="Played">MP</th>
+                                    <th class="py-2 px-1 text-center" title="Won">W</th>
+                                    <th class="py-2 px-1 text-center" title="Drawn">D</th>
+                                    <th class="py-2 px-1 text-center" title="Lost">L</th>
+                                    <th class="py-2 px-1 text-center" title="Goal Difference">GD</th>
+                                    <th class="py-2 px-2 text-center font-bold text-gray-200" title="Points">Pts</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${rowsHtml}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+                grid.appendChild(groupCard);
+            });
+        }
+
+        // --- MASTER GROUP PILDUN HORE ---
+        function getPildunHoreMasterGroups() {
+            return [
+                { group: "A", teams: [{name_en: "Meksiko", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "Austria", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "Cote D. Ivoire", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "New Zealand", mp:0, w:0, d:0, l:0, gd:0, pts:0}] },
+                { group: "B", teams: [{name_en: "Swiss", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "Senegal", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "Mesir", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "Bosnia", mp:0, w:0, d:0, l:0, gd:0, pts:0}] },
+                { group: "C", teams: [{name_en: "Belanda", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "Turki", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "Qatar", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "Capo Verde", mp:0, w:0, d:0, l:0, gd:0, pts:0}] },
+                { group: "D", teams: [{name_en: "Amerika", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "Colombia", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "Arab Saudi", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "Ghana", mp:0, w:0, d:0, l:0, gd:0, pts:0}] },
+                { group: "E", teams: [{name_en: "Jerman", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "Maroko", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "Swedia", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "Haiti", mp:0, w:0, d:0, l:0, gd:0, pts:0}] },
+                { group: "F", teams: [{name_en: "Argentina", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "Ecuador", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "Panama", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "Curacao", mp:0, w:0, d:0, l:0, gd:0, pts:0}] },
+                { group: "G", teams: [{name_en: "Spain", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "Iran", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "Aljazair", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "Tunisia", mp:0, w:0, d:0, l:0, gd:0, pts:0}] },
+                { group: "H", teams: [{name_en: "England", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "Croatia", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "Congo", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "Iraq", mp:0, w:0, d:0, l:0, gd:0, pts:0}] },
+                { group: "I", teams: [{name_en: "Portugal", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "Korsel", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "Ceko", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "Paraguay", mp:0, w:0, d:0, l:0, gd:0, pts:0}] },
+                { group: "J", teams: [{name_en: "Prancis", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "Jepang", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "Norwegia", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "Uzbekistan", mp:0, w:0, d:0, l:0, gd:0, pts:0}] },
+                { group: "K", teams: [{name_en: "Brazil", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "Canada", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "Scotlandia", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "Jordania", mp:0, w:0, d:0, l:0, gd:0, pts:0}] },
+                { group: "L", teams: [{name_en: "Belgia", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "Uruguay", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "Australia", mp:0, w:0, d:0, l:0, gd:0, pts:0}, {name_en: "Africa Selatan", mp:0, w:0, d:0, l:0, gd:0, pts:0}] }
+            ];
+        }
+
+        function populateMockDictionary() {
+            globalTeamsMap = {
+                "1": "Mexico", "2": "Austria", "3": "Cote D. Ivoire", "4": "New Zealand",
+                "5": "Switzerland", "6": "Senegal", "7": "Egypt", "8": "Bosnia",
+                "9": "Netherlands", "10": "Turkey", "11": "Qatar", "12": "Cape Verde",
+                "13": "United States", "14": "Colombia", "15": "Saudi Arabia", "16": "Ghana",
+                "17": "Germany", "18": "Morocco", "19": "Sweden", "20": "Haiti",
+                "21": "Argentina", "22": "Ecuador", "23": "Panama", "24": "Curacao",
+                "25": "Spain", "26": "Iran", "27": "Aljazair", "28": "Tunisia",
+                "29": "England", "30": "Croatia", "31": "Congo", "32": "Iraq",
+                "33": "Portugal", "34": "Korsel", "35": "Ceko", "36": "Paraguay",
+                "37": "France", "38": "Japan", "39": "Norwegia", "40": "Uzbekistan",
+                "41": "Brazil", "42": "Canada", "43": "Scotlandia", "44": "Jordania",
+                "45": "Belgia", "46": "Uruguay", "47": "Australia", "48": "Africa Selatan"
+            };
+        }
+
+        function getSimulatedData(endpoint) {
+            const baseResponse = { status: "success", timestamp: new Date().toISOString() };
+            if (endpoint === 'get/games') {
+                return { ...baseResponse, games: [
+                    { home_team_name_en: "Mexico", away_team_name_en: "Austria", home_score: "2", away_score: "1", finished: "false", time_elapsed: "75", stadium_id: "Azteca", local_date: "2026-06-11T16:00:00Z" },
+                    { home_team_name_en: "Switzerland", away_team_name_en: "Senegal", home_score: null, away_score: null, finished: "false", time_elapsed: "notstarted", stadium_id: "MetLife", local_date: "2026-06-12T19:00:00Z" },
+                    { home_team_name_en: "Netherlands", away_team_name_en: "Turkey", home_score: null, away_score: null, finished: "false", time_elapsed: "notstarted", stadium_id: "BMO Field", local_date: "2026-06-12T21:00:00Z" },
+                    { home_team_name_en: "United States", away_team_name_en: "Colombia", home_score: "3", away_score: "0", finished: "true", time_elapsed: "90", stadium_id: "SoFi", local_date: "2026-06-10T14:00:00Z" },
+                    { home_team_name_en: "Germany", away_team_name_en: "Morocco", home_score: "1", away_score: "1", finished: "false", time_elapsed: "42", stadium_id: "AT&T", local_date: "2026-06-11T18:00:00Z" },
+                    { home_team_name_en: "Argentina", away_team_name_en: "Ecuador", home_score: null, away_score: null, finished: "false", time_elapsed: "notstarted", stadium_id: "Lumen Field", local_date: "2026-06-13T16:00:00Z" }
+                ]};
+            }
+            return { message: "No data mapped." };
+        }
         
-        body .modal-widget {
-            width: 90%;
-            max-width: 700px;
+        function getFlagCode(c) {
+            if (!c || typeof c !== 'string') return 'un';
+            const map = {
+                'meksiko':'mx','mexico':'mx',
+                'austria':'at',
+                'cote d. ivoire':'ci','cote d ivoire':'ci','ivory coast':'ci',
+                'new zealand':'nz','selandia baru':'nz',
+                'swiss':'ch','switzerland':'ch',
+                'senegal':'sn',
+                'mesir':'eg','egypt':'eg',
+                'bosnia':'ba','bosnia and herzegovina':'ba','bosnia & herzegovina':'ba',
+                'belanda':'nl','netherlands':'nl',
+                'turki':'tr','turkey':'tr','turkiye':'tr',
+                'qatar':'qa',
+                'capo verde':'cv','cape verde':'cv',
+                'amerika':'us','usa':'us','united states':'us',
+                'colombia':'co',
+                'arab saudi':'sa','saudi arabia':'sa',
+                'ghana':'gh',
+                'jerman':'de','germany':'de',
+                'maroko':'ma','morocco':'ma',
+                'swedia':'se','sweden':'se',
+                'haiti':'ht',
+                'argentina':'ar',
+                'ecuador':'ec',
+                'panama':'pa',
+                'curacao':'cw',
+                'spain':'es','spanyol':'es',
+                'iran':'ir','ir iran':'ir',
+                'aljazair':'dz','algeria':'dz',
+                'tunisia':'tn',
+                'england':'gb-eng','inggris':'gb-eng',
+                'croatia':'hr','kroasia':'hr',
+                'congo':'cd','dr congo':'cd',
+                'iraq':'iq','irak':'iq',
+                'portugal':'pt',
+                'korsel':'kr','south korea':'kr','korea selatan':'kr','korea republic':'kr',
+                'ceko':'cz','czech republic':'cz','czechia':'cz',
+                'paraguay':'py',
+                'prancis':'fr','france':'fr',
+                'jepang':'jp','japan':'jp',
+                'norwegia':'no','norway':'no',
+                'uzbekistan':'uz',
+                'brazil':'br','brasil':'br',
+                'canada':'ca','kanada':'ca',
+                'scotlandia':'gb-sct','scotland':'gb-sct',
+                'jordania':'jo','jordan':'jo',
+                'belgia':'be','belgium':'be',
+                'uruguay':'uy',
+                'australia':'au',
+                'africa selatan':'za','south africa':'za'
+            };
+            return map[c.trim().toLowerCase()] || 'un';
         }
-        body .modal-widget-content {
-            padding: 0;
-            height: 60vh;
-        }
-    </style>
+
+        // Initialize all sections
+        window.addEventListener('DOMContentLoaded', async () => {
+            await buildTeamsDictionary();
+            
+            // Inisialisasi API Fetch
+            loadIPTV();
+            fetchMatchScheduleUI();
+            // fetchStandingsUI(); // DIMATIKAN: Karena klasemen sekarang menggunakan iframe resmi FIFA
+        });
+    </script>
 
 </body>
 </html>
