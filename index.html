@@ -612,7 +612,7 @@
                     if (data.fatal) {
                         console.error("HLS Error:", data);
                         loader.classList.remove('hidden');
-                        msg.innerHTML = `<span class="text-red-400">Error memuat stream. Saluran offline.</span>`;
+                        msg.innerHTML = `<span class="text-red-400">Error memuat stream. Pilih Saluran Lain.</span>`;
                         hlsInstance.destroy();
                     }
                 });
